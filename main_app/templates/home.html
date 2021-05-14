@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Senddit Home</h2>
+
+{% if user.is_authenticated %}
+    <h3>Welcome {{user.username}}</h3>
+{% endif %}
+
+{% endblock %}

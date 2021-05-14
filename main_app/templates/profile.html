@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if user.is_authenticated %}
+    <p>Your profile information</p>
+{% else %}
+    <p>You don't have a profile</p>
+{% endif %}
+
+{% endblock %}
