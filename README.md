@@ -619,3 +619,103 @@ At least at this point it's working that way.
 
 
 #### GIT Add * Commit * Push
+
+
+# Create a view-toggle
+
+Okay, now I want to bring in jquery to make a toggle button that will switch between the two views. I will make a button that will use jquery to switch the css styles of the elements on the page, to make the view switch from row to column.
+
+
+In main_app/templates/base.html, make these changes, 
+```
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+    <title>Senddit</title>
+</head>
+<body>
+    <nav>
+    {% if user.is_authenticated %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'shout' %}">Shout</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'signup' %}">Signup</a>
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+    </nav>
+    
+    <div class="block">
+        {% block content %}
+        {% endblock %}
+        <button class="btn switch">Switch View</button>
+    </div>
+
+</body>
+</html>
+```
+
+In your terminal, run, 
+`mkdir main_app/static/scripts`
+`touch main_app/static/scripts/main.js`
+
+In main_app/static/scripts/main.js, make these changes, 
+```
+console.log("good morning developers");
+```
+
+In main_app/templates/base.html, make these changes, 
+```
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="{% static 'scripts/main.js' %}" defer></script>
+    <title>Senddit</title>
+</head>
+<body>
+    <nav>
+    {% if user.is_authenticated %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'shout' %}">Shout</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'signup' %}">Signup</a>
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+    </nav>
+    
+    <div class="block">
+        {% block content %}
+        {% endblock %}
+        <button class="btn switch">Switch View</button>
+    </div>
+
+</body>
+</html>
+```
+
+In main_app/static/scripts/main.js, make these changes,
+```
+console.log("good morning developers");
+
+const switchViewDirection = function(){
+    console.log("click")
+}
+
+$("#switch").on("click", switchViewDirection)
+```
