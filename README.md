@@ -455,7 +455,7 @@ class Shout_List(View):
         return render(request, "create_shout.html")
 
     def post(self, request):
-        return redirect("profile.html")
+        return redirect("shout")
 
 class Profile(View):
     def get(self, request):
@@ -509,3 +509,6 @@ In main_app/templates/base.html, make these changes,
 </body>
 </html>
 ```
+
+NOTES:
+maybe change the Shout(View) to Shout(CreateView)? I'll need to create a model for shout I think, then in the view def form_valid(self, form) and def get_success_url(self)

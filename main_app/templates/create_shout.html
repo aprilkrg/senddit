@@ -3,7 +3,8 @@
 
 <h4>you know it makes you wanna</h4>
 <h3>SHOUT</h3>
-<form method="post" action="{ url 'shout' }">
+<form method="post" action="{% url 'shout' %}">
+    {% csrf_token %}
     <input type="text" placeholder="tell 'em" name="input" />
     <input type="submit" value="SHOUT" />
     <input type="hidden" value="{{ next }}" name="next" />

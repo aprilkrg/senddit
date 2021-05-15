@@ -11,12 +11,10 @@ class Home(TemplateView):
 
 class Shout(View):
     def get(self, request):
-        print("this is the GET route")
         return render(request, "create_shout.html")
 
     def post(self, request):
-        print(request, 'request *****')
-        return redirect("profile.html")
+        return redirect("shout")
 
 class Profile(View):
     def get(self, request):
