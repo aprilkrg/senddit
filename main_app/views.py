@@ -1,3 +1,4 @@
+from django import http
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import login
@@ -8,6 +9,13 @@ from django.http import HttpResponse
 # Create your views here.
 class Home(TemplateView):
     template_name = "home.html"
+
+class Shout(View):
+    def get(self, request):
+        return render(request, "create_shout.html")
+
+    def post(self, request):
+        return redirect("profile.html")
 
 class Profile(View):
     def get(self, request):

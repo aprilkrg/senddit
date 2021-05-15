@@ -384,3 +384,102 @@ In main_app/templates/profile.html, make these changes,
 ```
 
 #### GIT Add * Commit * Push
+
+# Display more on profile page
+
+In main_app/templates/profile.html, make these changes, 
+```
+{% extends 'base.html' %}
+{% block content %}
+
+{% if user.is_authenticated %}
+    <p>{{user.username}}</p>
+    <p>{{user.date_joined}}</p>
+{% else %}
+    <p>You don't have a profile</p>
+{% endif %}
+
+{% endblock %}
+```
+
+# Create a Shout
+
+In your terminal, run, 
+`touch main_app/templates/create_shout.html`
+
+In main_app/templates/create_shout.html, make these changes, 
+```
+{% extends 'base.html' %}
+{% block content %}
+
+<h4>you know it makes you wanna</h4>
+<h3>SHOUT</h3>
+<form method="post" action="{ url 'shouts' }">
+    <input type="text" placeholder="tell 'em" name="input" />
+    <input type="submit" value="SHOUT" />
+    <input type="hidden" value="{{ next }}" name="next" />
+</form>
+
+
+{% endblock %}
+```
+
+In main_app/urls.py, make these changes, 
+```
+from django.urls import path
+from .views import Signup, Home, Profile, Shout_List
+
+urlpatterns = [
+    path('', Home.as_view(), name="home"),
+    path('accounts/shouts', Shout_List.as_view(), name="shouts"),
+    path('accounts/profile/', Profile.as_view(), name="profile"),
+    path('accounts/signup/', Signup.as_view(), name="signup")
+]
+```
+
+In main_app/views.py, make these changes, 
+```
+from django import http
+from django.shortcuts import render, redirect
+from django.views import View
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+from django.views.generic.base import TemplateView
+from django.http import HttpResponse
+
+# Create your views here.
+class Home(TemplateView):
+    template_name = "home.html"
+
+class Shout_List(View):
+    def get(self, request):
+        return HttpResponse("all shouts")
+
+    def post(self, request):
+        return HttpResponse("senddit")
+
+class Profile(View):
+    def get(self, request):
+        return render(request, "profile.html")
+
+class Signup(View):
+    def get(self, request):
+        form = UserCreationForm()
+        context = {"form": form}
+        return render(request, "signup.html", context)
+
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect("home")
+        else:
+            context = {"form": form}
+            return render(request, "signup.html", context)
+```
+
+In main_app/templates/base.html, make these changes, 
+```
+
+```
