@@ -1,4 +1,3 @@
-from django import http
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import login
@@ -12,9 +11,11 @@ class Home(TemplateView):
 
 class Shout(View):
     def get(self, request):
+        print("this is the GET route")
         return render(request, "create_shout.html")
 
     def post(self, request):
+        print(request, 'request *****')
         return redirect("profile.html")
 
 class Profile(View):

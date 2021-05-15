@@ -414,7 +414,7 @@ In main_app/templates/create_shout.html, make these changes,
 
 <h4>you know it makes you wanna</h4>
 <h3>SHOUT</h3>
-<form method="post" action="{ url 'shouts' }">
+<form method="post" action="{ url 'shout' }">
     <input type="text" placeholder="tell 'em" name="input" />
     <input type="submit" value="SHOUT" />
     <input type="hidden" value="{{ next }}" name="next" />
@@ -427,11 +427,11 @@ In main_app/templates/create_shout.html, make these changes,
 In main_app/urls.py, make these changes, 
 ```
 from django.urls import path
-from .views import Signup, Home, Profile, Shout_List
+from .views import Signup, Home, Profile, Shout
 
 urlpatterns = [
     path('', Home.as_view(), name="home"),
-    path('accounts/shouts', Shout_List.as_view(), name="shouts"),
+    path('accounts/shout/', Shout.as_view(), name="shout"),
     path('accounts/profile/', Profile.as_view(), name="profile"),
     path('accounts/signup/', Signup.as_view(), name="signup")
 ]
@@ -439,7 +439,6 @@ urlpatterns = [
 
 In main_app/views.py, make these changes, 
 ```
-from django import http
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import login
@@ -453,10 +452,10 @@ class Home(TemplateView):
 
 class Shout_List(View):
     def get(self, request):
-        return HttpResponse("all shouts")
+        return render(request, "create_shout.html")
 
     def post(self, request):
-        return HttpResponse("senddit")
+        return redirect("profile.html")
 
 class Profile(View):
     def get(self, request):
@@ -481,5 +480,32 @@ class Signup(View):
 
 In main_app/templates/base.html, make these changes, 
 ```
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senddit</title>
+</head>
+<body>
+    
+    {% if user.is_authenticated %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'shout' %}">Shout</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'signup' %}">Signup</a>
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+    
 
+    {% block content %}
+    {% endblock %}
+    
+</body>
+</html>
 ```
