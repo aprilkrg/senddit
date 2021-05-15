@@ -510,5 +510,112 @@ In main_app/templates/base.html, make these changes,
 </html>
 ```
 
-NOTES:
-maybe change the Shout(View) to Shout(CreateView)? I'll need to create a model for shout I think, then in the view def form_valid(self, form) and def get_success_url(self)
+
+#### GIT Add * Commit * Push
+
+
+<!-- NOTES:
+maybe change the Shout(View) to Shout(CreateView)? I'll need to create a model for shout I think, then in the view def form_valid(self, form) and def get_success_url(self) -->
+
+
+# Create some basic styling
+
+In your terminal, 
+`mkdir main_app/static main_app/static/styles`
+`touch main_app/static/styles/main.css`
+
+In main_app/templates/base.html, make these changes, 
+```
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+    <title>Senddit</title>
+</head>
+<body>
+    <nav>
+    {% if user.is_authenticated %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'shout' %}">Shout</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'signup' %}">Signup</a>
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+    </nav>
+    
+    <div class="block">
+    {% block content %}
+    {% endblock %}
+    </div>
+
+</body>
+</html>
+```
+
+In your main_app/static/styles/main.css, make these changes, 
+```
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+body {
+    background-color: aliceblue;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+}
+a {
+    text-decoration: none;
+    margin: 5px;
+}
+.block {
+    margin: 50px;
+    /* position: relative; */
+}
+nav {
+    margin: 10px;
+    display: flex;
+    /* flex-direction: row; */
+    flex-direction: column;
+    position: relative;
+}
+```
+
+Here's what I've learned and am thinking about right now about the layout:
+Nav bar on the left in a column, settings are: 
+```
+.block {
+    margin: 50px;
+}
+nav {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+```
+
+Nav bar on the top in a row, settings are:
+```
+.block {
+    margin: 50px;
+    position: relative;
+}
+nav {
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+}
+```
+
+At least at this point it's working that way.
+
+
+#### GIT Add * Commit * Push
