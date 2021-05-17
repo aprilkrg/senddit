@@ -384,3 +384,338 @@ In main_app/templates/profile.html, make these changes,
 ```
 
 #### GIT Add * Commit * Push
+
+# Display more on profile page
+
+In main_app/templates/profile.html, make these changes, 
+```
+{% extends 'base.html' %}
+{% block content %}
+
+{% if user.is_authenticated %}
+    <p>{{user.username}}</p>
+    <p>{{user.date_joined}}</p>
+{% else %}
+    <p>You don't have a profile</p>
+{% endif %}
+
+{% endblock %}
+```
+
+# Create a Shout
+
+In your terminal, run, 
+`touch main_app/templates/create_shout.html`
+
+In main_app/templates/create_shout.html, make these changes, 
+```
+{% extends 'base.html' %}
+{% block content %}
+
+<h4>you know it makes you wanna</h4>
+<h3>SHOUT</h3>
+<form method="post" action="{ url 'shout' }">
+    <input type="text" placeholder="tell 'em" name="input" />
+    <input type="submit" value="SHOUT" />
+    <input type="hidden" value="{{ next }}" name="next" />
+</form>
+
+
+{% endblock %}
+```
+
+In main_app/urls.py, make these changes, 
+```
+from django.urls import path
+from .views import Signup, Home, Profile, Shout
+
+urlpatterns = [
+    path('', Home.as_view(), name="home"),
+    path('accounts/shout/', Shout.as_view(), name="shout"),
+    path('accounts/profile/', Profile.as_view(), name="profile"),
+    path('accounts/signup/', Signup.as_view(), name="signup")
+]
+```
+
+In main_app/views.py, make these changes, 
+```
+from django.shortcuts import render, redirect
+from django.views import View
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+from django.views.generic.base import TemplateView
+from django.http import HttpResponse
+
+# Create your views here.
+class Home(TemplateView):
+    template_name = "home.html"
+
+class Shout_List(View):
+    def get(self, request):
+        return render(request, "create_shout.html")
+
+    def post(self, request):
+        return redirect("shout")
+
+class Profile(View):
+    def get(self, request):
+        return render(request, "profile.html")
+
+class Signup(View):
+    def get(self, request):
+        form = UserCreationForm()
+        context = {"form": form}
+        return render(request, "signup.html", context)
+
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect("home")
+        else:
+            context = {"form": form}
+            return render(request, "signup.html", context)
+```
+
+In main_app/templates/base.html, make these changes, 
+```
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senddit</title>
+</head>
+<body>
+    
+    {% if user.is_authenticated %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'shout' %}">Shout</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'signup' %}">Signup</a>
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+    
+
+    {% block content %}
+    {% endblock %}
+    
+</body>
+</html>
+```
+
+
+#### GIT Add * Commit * Push
+
+
+<!-- NOTES:
+maybe change the Shout(View) to Shout(CreateView)? I'll need to create a model for shout I think, then in the view def form_valid(self, form) and def get_success_url(self) -->
+
+
+# Create some basic styling
+
+In your terminal, 
+`mkdir main_app/static main_app/static/styles`
+`touch main_app/static/styles/main.css`
+
+In main_app/templates/base.html, make these changes, 
+```
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+    <title>Senddit</title>
+</head>
+<body>
+    <nav>
+    {% if user.is_authenticated %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'shout' %}">Shout</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'signup' %}">Signup</a>
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+    </nav>
+    
+    <div class="block">
+    {% block content %}
+    {% endblock %}
+    </div>
+
+</body>
+</html>
+```
+
+In your main_app/static/styles/main.css, make these changes, 
+```
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+body {
+    background-color: aliceblue;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+}
+a {
+    text-decoration: none;
+    margin: 5px;
+}
+.block {
+    margin: 50px;
+    /* position: relative; */
+}
+nav {
+    margin: 10px;
+    display: flex;
+    /* flex-direction: row; */
+    flex-direction: column;
+    position: relative;
+}
+```
+
+Here's what I've learned and am thinking about right now about the layout:
+Nav bar on the left in a column, settings are: 
+```
+.block {
+    margin: 50px;
+}
+nav {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+```
+
+Nav bar on the top in a row, settings are:
+```
+.block {
+    margin: 50px;
+    position: relative;
+}
+nav {
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+}
+```
+
+At least at this point it's working that way.
+
+
+#### GIT Add * Commit * Push
+
+
+# Create a view-toggle
+
+Okay, now I want to bring in jquery to make a toggle button that will switch between the two views. I will make a button that will use jquery to switch the css styles of the elements on the page, to make the view switch from row to column.
+
+
+In main_app/templates/base.html, make these changes, 
+```
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+    <title>Senddit</title>
+</head>
+<body>
+    <nav>
+    {% if user.is_authenticated %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'shout' %}">Shout</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'signup' %}">Signup</a>
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+    </nav>
+    
+    <div class="block">
+        {% block content %}
+        {% endblock %}
+        <button class="btn switch">Switch View</button>
+    </div>
+
+</body>
+</html>
+```
+
+In your terminal, run, 
+`mkdir main_app/static/scripts`
+`touch main_app/static/scripts/main.js`
+
+In main_app/static/scripts/main.js, make these changes, 
+```
+console.log("good morning developers");
+```
+
+In main_app/templates/base.html, make these changes, 
+```
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="{% static 'scripts/main.js' %}" defer></script>
+    <title>Senddit</title>
+</head>
+<body>
+    <nav>
+    {% if user.is_authenticated %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'shout' %}">Shout</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'signup' %}">Signup</a>
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+    </nav>
+    
+    <div class="block">
+        {% block content %}
+        {% endblock %}
+        <button class="btn switch">Switch View</button>
+    </div>
+
+</body>
+</html>
+```
+
+In main_app/static/scripts/main.js, make these changes,
+```
+console.log("good morning developers");
+
+const switchViewDirection = function(){
+    console.log("click")
+}
+
+$("#switch").on("click", switchViewDirection)
+```

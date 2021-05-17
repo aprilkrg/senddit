@@ -9,6 +9,13 @@ from django.http import HttpResponse
 class Home(TemplateView):
     template_name = "home.html"
 
+class Shout(View):
+    def get(self, request):
+        return render(request, "create_shout.html")
+
+    def post(self, request):
+        return redirect("shout")
+
 class Profile(View):
     def get(self, request):
         return render(request, "profile.html")
